@@ -613,7 +613,7 @@ with tab4:
         st.markdown(f"""
         <div class="formula-box">
             <strong>Generalized Pareto Distribution CDF:</strong><br><br>
-            F(x) = 1 − (1 + ξx/σ)^(−1/ξ)  for ξ ≠ 0<br><br>
+            F(x) = 1 − (1 + ξx/σ)<sup>−1/ξ</sup>  for ξ ≠ 0<br><br>
             where:<br>
             • ξ (xi) = shape parameter (determines tail heaviness)<br>
             • σ (sigma) = scale parameter<br>
@@ -625,9 +625,9 @@ with tab4:
         <div class="info-box">
             <h4 style="color:{COLORS['accent_gold']};">Interpreting the Shape Parameter (ξ):</h4>
             <ul>
-                <li><strong>ξ > 0:</strong> Heavy-tailed distribution (Pareto-type, common for financial assets)</li>
+                <li><strong>ξ &gt; 0:</strong> Heavy-tailed distribution (Pareto-type, common for financial assets)</li>
                 <li><strong>ξ = 0:</strong> Exponential tail (medium risk)</li>
-                <li><strong>ξ < 0:</strong> Short-tailed distribution (bounded, rare in finance)</li>
+                <li><strong>ξ &lt; 0:</strong> Short-tailed distribution (bounded, rare in finance)</li>
             </ul>
             
             <p style="margin-top:1rem;">For most stock returns, ξ is positive, indicating fat tails with higher 
@@ -639,11 +639,11 @@ with tab4:
         st.markdown(f"""
         <div class="formula-box">
             <strong>Value at Risk using GPD:</strong><br><br>
-            VaR_α = u + (σ/ξ) × [(n/N_u × (1−α))^(−ξ) − 1]<br><br>
+            VaR<sub>α</sub> = u + (σ/ξ) × [(n/N<sub>u</sub> × (1−α))<sup>−ξ</sup> − 1]<br><br>
             where:<br>
             • u = threshold<br>
             • n = total observations<br>
-            • N_u = number of exceedances<br>
+            • N<sub>u</sub> = number of exceedances<br>
             • α = confidence level (e.g., 0.95)
         </div>
         """, unsafe_allow_html=True)
@@ -658,7 +658,7 @@ with tab4:
             <div class="info-box">
                 <h4 style="color:{COLORS['accent_gold']};">1. EWMA (Exponentially Weighted Moving Average)</h4>
                 <strong>Formula:</strong><br>
-                σ²_t = λ × σ²_(t-1) + (1−λ) × r²_(t-1)<br><br>
+                σ²<sub>t</sub> = λ × σ²<sub>t-1</sub> + (1−λ) × r²<sub>t-1</sub><br><br>
                 
                 <strong>Key Features:</strong>
                 <ul>
@@ -681,7 +681,7 @@ with tab4:
             <div class="info-box" style="margin-top:1rem;">
                 <h4 style="color:{COLORS['accent_gold']};">3. GARCH(1,1)</h4>
                 <strong>Formula:</strong><br>
-                σ²_t = ω + α₁ × r²_(t-1) + β₁ × σ²_(t-1)<br><br>
+                σ²<sub>t</sub> = ω + α₁ × r²<sub>t-1</sub> + β₁ × σ²<sub>t-1</sub><br><br>
                 
                 <strong>Key Features:</strong>
                 <ul>
@@ -706,7 +706,7 @@ with tab4:
             <div class="info-box">
                 <h4 style="color:{COLORS['accent_gold']};">2. ARCH(1)</h4>
                 <strong>Formula:</strong><br>
-                σ²_t = ω + α₁ × r²_(t-1)<br><br>
+                σ²<sub>t</sub> = ω + α₁ × r²<sub>t-1</sub><br><br>
                 
                 <strong>Key Features:</strong>
                 <ul>
@@ -729,13 +729,13 @@ with tab4:
             <div class="info-box" style="margin-top:1rem;">
                 <h4 style="color:{COLORS['accent_gold']};">4. EGARCH(1,1)</h4>
                 <strong>Formula:</strong><br>
-                log(σ²_t) = ω + β₁ × log(σ²_(t-1)) + α₁ × |z_(t-1)| + γ × z_(t-1)<br><br>
+                log(σ²<sub>t</sub>) = ω + β₁ × log(σ²<sub>t-1</sub>) + α₁ × |z<sub>t-1</sub>| + γ × z<sub>t-1</sub><br><br>
                 
                 <strong>Key Features:</strong>
                 <ul>
-                    <li>Logarithmic form ensures σ²_t > 0</li>
+                    <li>Logarithmic form ensures σ²<sub>t</sub> &gt; 0</li>
                     <li>γ captures leverage effect</li>
-                    <li>Negative shocks (γ < 0) increase volatility more</li>
+                    <li>Negative shocks (γ &lt; 0) increase volatility more</li>
                     <li>Asymmetric response to news</li>
                 </ul>
                 
@@ -761,24 +761,43 @@ with tab4:
             "We are 95% confident that our losses will not exceed $1 million tomorrow."</p>
             
             <h4 style="color:{COLORS['accent_gold']}; margin-top:1rem;">Calculation Methods:</h4>
-            <ol>
-                <li><strong>Parametric (Variance-Covariance):</strong> Assumes normal distribution
-                    <div class="formula-box" style="margin-top:0.5rem;">
-                        VaR_α = μ + σ × z_α<br>
-                        where z_α is the α-quantile of standard normal
-                    </div>
-                </li>
-                <li style="margin-top:1rem;"><strong>Historical Simulation:</strong> Uses empirical distribution
-                    <div class="formula-box" style="margin-top:0.5rem;">
-                        VaR_α = α-th quantile of historical returns
-                    </div>
-                </li>
-                <li style="margin-top:1rem;"><strong>Monte Carlo:</strong> Simulates future scenarios
-                    <div class="formula-box" style="margin-top:0.5rem;">
-                        Generate N scenarios → Sort → Take α-th percentile
-                    </div>
-                </li>
-            </ol>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="info-box">
+            <strong>1. Parametric (Variance-Covariance):</strong> Assumes normal distribution
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="formula-box">
+            VaR<sub>α</sub> = μ + σ × z<sub>α</sub><br>
+            where z<sub>α</sub> is the α-quantile of standard normal
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="info-box">
+            <strong>2. Historical Simulation:</strong> Uses empirical distribution
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="formula-box">
+            VaR<sub>α</sub> = α-th quantile of historical returns
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="info-box">
+            <strong>3. Monte Carlo:</strong> Simulates future scenarios
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="formula-box">
+            Generate N scenarios → Sort → Take α-th percentile
         </div>
         """, unsafe_allow_html=True)
 
@@ -794,15 +813,17 @@ with tab4:
                 <li>ES satisfies subadditivity: ES(X+Y) ≤ ES(X) + ES(Y)</li>
                 <li>Preferred by Basel III for market risk capital</li>
             </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="formula-box">
+            <strong>For Normal Distribution:</strong><br><br>
+            ES<sub>α</sub> = μ + σ × φ(z<sub>α</sub>) / (1−α)<br><br>
+            where φ is the standard normal PDF<br><br>
             
-            <div class="formula-box" style="margin-top:1rem;">
-                <strong>For Normal Distribution:</strong><br><br>
-                ES_α = μ + σ × φ(z_α) / (1−α)<br><br>
-                where φ is the standard normal PDF<br><br>
-                
-                <strong>For GPD (EVT):</strong><br><br>
-                ES_α = (VaR_α + σ − ξ×u) / (1−ξ)  for ξ < 1
-            </div>
+            <strong>For GPD (EVT):</strong><br><br>
+            ES<sub>α</sub> = (VaR<sub>α</sub> + σ − ξ×u) / (1−ξ)  for ξ &lt; 1
         </div>
         """, unsafe_allow_html=True)
 
@@ -914,16 +935,22 @@ with tab4:
                 <li><strong>Yellow Zone (5-9 exceptions):</strong> Review needed, multiplier = 3.4-3.85</li>
                 <li><strong>Red Zone (10+ exceptions):</strong> Model inadequate, multiplier = 4.0</li>
             </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown('<div class="section-title">Kupiec Test Formula</div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="formula-box">
+            <strong>Kupiec Test (Unconditional Coverage):</strong><br><br>
             
-            <div class="formula-box" style="margin-top:1rem;">
-                <strong>Kupiec Test (Unconditional Coverage):</strong><br><br>
-                LR_uc = -2 × ln[(1−α)^(T−N) × α^N] + 2 × ln[(1−N/T)^(T−N) × (N/T)^N]<br><br>
-                where:<br>
-                • T = number of observations<br>
-                • N = number of VaR exceptions<br>
-                • α = VaR confidence level<br><br>
-                LR_uc ~ χ²(1) under null hypothesis
-            </div>
+            LR<sub>uc</sub> = -2 × ln[(1−α)<sup>T−N</sup> × α<sup>N</sup>] + 2 × ln[(1−N/T)<sup>T−N</sup> × (N/T)<sup>N</sup>]<br><br>
+            
+            where:<br>
+            • T = number of observations<br>
+            • N = number of VaR exceptions<br>
+            • α = VaR confidence level<br><br>
+            
+            LR<sub>uc</sub> ~ χ²(1) under null hypothesis
         </div>
         """, unsafe_allow_html=True)
 
