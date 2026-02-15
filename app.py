@@ -998,133 +998,114 @@ with tab5:
         st.dataframe(vol_params, use_container_width=True, hide_index=True)
 
     with spec_tab2:
-        st.markdown(f"""
-        <div class="info-box">
-            <h4 style="color:{COLORS['accent_gold']};">Key Assumptions</h4>
-            
-            <strong>1. Return Distribution:</strong>
-            <ul>
-                <li>Log returns calculated as: r_t = ln(P_t / P_(t-1))</li>
-                <li>Losses defined as negative returns (positive = loss)</li>
-                <li>Annualization: multiply by √252 for volatility</li>
-            </ul>
-            
-            <strong>2. EVT Assumptions:</strong>
-            <ul>
-                <li>Exceedances over high threshold follow GPD</li>
-                <li>Threshold sufficiently high but with adequate exceedances</li>
-                <li>Independence of exceedances (may not hold with clustering)</li>
-                <li>Stationarity over sample period</li>
-            </ul>
-            
-            <strong>3. GARCH Model Assumptions:</strong>
-            <ul>
-                <li>Conditional volatility time-varying</li>
-                <li>Standardized residuals i.i.d. (typically normal)</li>
-                <li>Model parameters stable over estimation period</li>
-                <li>No structural breaks in variance process</li>
-            </ul>
-            
-            <strong>4. VaR/ES Calculation:</strong>
-            <ul>
-                <li>Normal distribution for volatility-based VaR/ES</li>
-                <li>GPD for EVT-based VaR/ES</li>
-                <li>Zero mean assumption for short horizon (1-day)</li>
-                <li>Losses are i.i.d. (or conditionally independent given volatility)</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        st.subheader("📊 Key Assumptions")
+        
+        st.markdown("### 1. Return Distribution")
+        st.write("• Log returns calculated as: r_t = ln(P_t / P_(t-1))")
+        st.write("• Losses defined as negative returns (positive = loss)")
+        st.write("• Annualization: multiply by √252 for volatility")
+        
+        st.markdown("### 2. EVT Assumptions")
+        st.write("• Exceedances over high threshold follow GPD")
+        st.write("• Threshold sufficiently high but with adequate exceedances")
+        st.write("• Independence of exceedances (may not hold with clustering)")
+        st.write("• Stationarity over sample period")
+        
+        st.markdown("### 3. GARCH Model Assumptions")
+        st.write("• Conditional volatility time-varying")
+        st.write("• Standardized residuals i.i.d. (typically normal)")
+        st.write("• Model parameters stable over estimation period")
+        st.write("• No structural breaks in variance process")
+        
+        st.markdown("### 4. VaR/ES Calculation")
+        st.write("• Normal distribution for volatility-based VaR/ES")
+        st.write("• GPD for EVT-based VaR/ES")
+        st.write("• Zero mean assumption for short horizon (1-day)")
+        st.write("• Losses are i.i.d. (or conditionally independent given volatility)")
 
-        st.markdown(f"""
-        <div class="info-box" style="margin-top:1rem;">
-            <h4 style="color:{COLORS['accent_gold']};">Limitations</h4>
-            
-            <strong>General:</strong>
-            <ul>
-                <li>Historical data may not predict future crises</li>
-                <li>Model assumes no regime changes</li>
-                <li>Single asset analysis (no portfolio correlations)</li>
-                <li>No transaction costs or liquidity effects</li>
-            </ul>
-            
-            <strong>EVT-Specific:</strong>
-            <ul>
-                <li>Requires sufficient tail observations</li>
-                <li>Threshold selection is somewhat subjective</li>
-                <li>Assumes tail behavior is stable</li>
-                <li>May underestimate risk during structural breaks</li>
-            </ul>
-            
-            <strong>GARCH-Specific:</strong>
-            <ul>
-                <li>Normal assumption may underestimate tail risk</li>
-                <li>Forecasts degrade with longer horizons</li>
-                <li>Estimation can fail for some stocks</li>
-                <li>Does not capture jumps or discontinuities</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("---")
+        st.subheader("⚠️ Limitations")
+        
+        st.markdown("### General")
+        st.write("• Historical data may not predict future crises")
+        st.write("• Model assumes no regime changes")
+        st.write("• Single asset analysis (no portfolio correlations)")
+        st.write("• No transaction costs or liquidity effects")
+        
+        st.markdown("### EVT-Specific")
+        st.write("• Requires sufficient tail observations")
+        st.write("• Threshold selection is somewhat subjective")
+        st.write("• Assumes tail behavior is stable")
+        st.write("• May underestimate risk during structural breaks")
+        
+        st.markdown("### GARCH-Specific")
+        st.write("• Normal assumption may underestimate tail risk")
+        st.write("• Forecasts degrade with longer horizons")
+        st.write("• Estimation can fail for some stocks")
+        st.write("• Does not capture jumps or discontinuities")
+
 
     with spec_tab3:
-        st.markdown(f"""
-        <div class="info-box">
-            <h4 style="color:{COLORS['accent_gold']};">Computational Methods</h4>
-            
-            <strong>Data Processing:</strong>
-            <ul>
-                <li><strong>Source:</strong> Yahoo Finance via yfinance library</li>
-                <li><strong>Frequency:</strong> Daily adjusted close prices</li>
-                <li><strong>Missing Data:</strong> Dropped (not interpolated)</li>
-                <li><strong>Caching:</strong> 1-hour TTL for price data</li>
-            </ul>
-            
-            <strong>GPD Estimation:</strong>
-            <ul>
-                <li><strong>Method:</strong> Maximum Likelihood Estimation</li>
-                <li><strong>Optimizer:</strong> L-BFGS-B with bounded parameters</li>
-                <li><strong>Bounds:</strong> ξ ∈ [-0.5, 0.5], σ > 0</li>
-                <li><strong>Fallback:</strong> SciPy's genpareto.fit() if MLE fails</li>
-            </ul>
-            
-            <strong>GARCH Estimation:</strong>
-            <ul>
-                <li><strong>Package:</strong> arch (Python ARCH/GARCH library)</li>
-                <li><strong>Method:</strong> Maximum Likelihood via numerical optimization</li>
-                <li><strong>Scaling:</strong> Returns multiplied by 100 for numerical stability</li>
-                <li><strong>Convergence:</strong> Default tolerances, warnings suppressed</li>
-            </ul>
-            
-            <strong>Visualization:</strong>
-            <ul>
-                <li><strong>Library:</strong> Matplotlib</li>
-                <li><strong>Charts:</strong> Histograms, line plots, bar charts</li>
-                <li><strong>Resolution:</strong> Default DPI for web display</li>
-                <li><strong>Memory:</strong> Figures closed after display to prevent leaks</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        st.subheader("⚙️ Computational Methods")
+        
+        st.markdown("### Data Processing")
+        st.write("**Source:** Yahoo Finance via yfinance library")
+        st.write("**Frequency:** Daily adjusted close prices")
+        st.write("**Missing Data:** Dropped (not interpolated)")
+        st.write("**Caching:** 1-hour TTL for price data")
+        
+        st.markdown("### GPD Estimation")
+        st.write("**Method:** Maximum Likelihood Estimation")
+        st.write("**Optimizer:** L-BFGS-B with bounded parameters")
+        st.write("**Bounds:** ξ ∈ [-0.5, 0.5], σ > 0")
+        st.write("**Fallback:** SciPy's genpareto.fit() if MLE fails")
+        
+        st.markdown("### GARCH Estimation")
+        st.write("**Package:** arch (Python ARCH/GARCH library)")
+        st.write("**Method:** Maximum Likelihood via numerical optimization")
+        st.write("**Scaling:** Returns multiplied by 100 for numerical stability")
+        st.write("**Convergence:** Default tolerances, warnings suppressed")
+        
+        st.markdown("### Visualization")
+        st.write("**Library:** Matplotlib")
+        st.write("**Charts:** Histograms, line plots, bar charts")
+        st.write("**Resolution:** Default DPI for web display")
+        st.write("**Memory:** Figures closed after display to prevent leaks")
 
-        st.markdown(f"""
-        <div class="formula-box" style="margin-top:1rem;">
-            <strong>Performance Considerations:</strong><br><br>
-            
-            • <strong>Data Loading:</strong> ~2-5 seconds (cached after first load)<br>
-            • <strong>EVT Calculation:</strong> ~0.1-0.5 seconds<br>
-            • <strong>GARCH Estimation:</strong> ~2-5 seconds per model<br>
-            • <strong>Total Pipeline:</strong> ~10-15 seconds for complete analysis<br><br>
-            
-            <strong>Optimization:</strong> Streamlit caching reduces subsequent loads to <1 second
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("---")
+        st.subheader("⚡ Performance Considerations")
+        
+        st.code("""
+Performance Benchmarks:
+
+• Data Loading: ~2-5 seconds (cached after first load)
+• EVT Calculation: ~0.1-0.5 seconds
+• GARCH Estimation: ~2-5 seconds per model
+• Total Pipeline: ~10-15 seconds for complete analysis
+
+Optimization: Streamlit caching reduces subsequent loads to <1 second
+        """, language=None)
 
 
 # Footer
 st.divider()
 st.markdown(f"""
-<div style="text-align:center; padding:1rem;">
-    <p style="color:{COLORS['accent_gold']}; font-family:'Playfair Display', serif; font-weight:700;">
+<div style="text-align:center; padding:1.5rem;">
+    <p style="color:{COLORS['accent_gold']}; font-family:'Playfair Display', serif; font-weight:700; font-size:1.1rem; margin-bottom:0.5rem;">
         {BRANDING['icon']} {BRANDING['name']}</p>
-    <p style="color:{COLORS['text_secondary']}; font-size:0.8rem;">
+    <p style="color:{COLORS['text_secondary']}; font-size:0.85rem; margin:0.3rem 0;">
         {BRANDING['instructor']} | {BRANDING['credentials']}</p>
+    <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,215,0,0.3);">
+        <p style="color:{COLORS['text_primary']}; font-size:0.9rem; margin:0.5rem 0;">
+            <a href="https://www.linkedin.com/in/trichyravis" target="_blank" 
+               style="color:{COLORS['accent_gold']}; text-decoration:none; margin:0 1rem;">
+                🔗 LinkedIn Profile
+            </a>
+            <a href="https://github.com/trichyravis" target="_blank" 
+               style="color:{COLORS['accent_gold']}; text-decoration:none; margin:0 1rem;">
+                💻 GitHub
+            </a>
+        </p>
+    </div>
 </div>
 """, unsafe_allow_html=True)
