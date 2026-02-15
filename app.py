@@ -575,13 +575,7 @@ with tab3:
 with tab4:
     st.markdown('<div class="section-title">📚 Educational Materials</div>', unsafe_allow_html=True)
     
-    st.markdown(f"""
-    <div class="info-box">
-        <h3 style="color:{COLORS['accent_gold']}; margin-top:0;">Comprehensive Risk Management Education</h3>
-        <p>Learn the theoretical foundations and practical applications of advanced risk measurement techniques 
-        used in institutional finance and banking.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.info("**Comprehensive Risk Management Education**  \nLearn the theoretical foundations and practical applications of advanced risk measurement techniques used in institutional finance and banking.")
 
     # Sub-tabs for different topics
     edu_tab1, edu_tab2, edu_tab3, edu_tab4 = st.tabs([
@@ -592,246 +586,184 @@ with tab4:
     ])
 
     with edu_tab1:
-        st.markdown('<div class="section-title">📊 Extreme Value Theory (EVT)</div>', unsafe_allow_html=True)
+        st.subheader("📊 Extreme Value Theory (EVT)")
         
-        st.markdown(f"""
-        <div class="info-box">
-            <h4 style="color:{COLORS['accent_gold']};">What is EVT?</h4>
-            <p>Extreme Value Theory is a branch of statistics dealing with extreme deviations from the median 
-            of probability distributions. In finance, it's used to model tail risk—the risk of extreme losses.</p>
-            
-            <h4 style="color:{COLORS['accent_gold']}; margin-top:1rem;">Key Concepts:</h4>
-            <ul>
-                <li><strong>Threshold (u):</strong> A high quantile (e.g., 90th percentile) above which we model the tail</li>
-                <li><strong>Exceedances:</strong> Observations that exceed the threshold</li>
-                <li><strong>GPD (Generalized Pareto Distribution):</strong> The limiting distribution of exceedances</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("#### What is EVT?")
+        st.write("""
+        Extreme Value Theory is a branch of statistics dealing with extreme deviations from the median 
+        of probability distributions. In finance, it's used to model tail risk—the risk of extreme losses.
+        """)
+        
+        st.markdown("#### Key Concepts:")
+        st.write("**Threshold (u):** A high quantile (e.g., 90th percentile) above which we model the tail")
+        st.write("**Exceedances:** Observations that exceed the threshold")
+        st.write("**GPD (Generalized Pareto Distribution):** The limiting distribution of exceedances")
 
-        st.markdown('<div class="section-title">GPD Formula</div>', unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="formula-box">
-            <strong>Generalized Pareto Distribution CDF:</strong><br><br>
-            F(x) = 1 − (1 + ξx/σ)<sup>−1/ξ</sup>  for ξ ≠ 0<br><br>
-            where:<br>
-            • ξ (xi) = shape parameter (determines tail heaviness)<br>
-            • σ (sigma) = scale parameter<br>
-            • x = exceedance (loss − threshold)
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("#### GPD Formula")
+        st.code("""
+Generalized Pareto Distribution CDF:
 
-        st.markdown(f"""
-        <div class="info-box">
-            <h4 style="color:{COLORS['accent_gold']};">Interpreting the Shape Parameter (ξ):</h4>
-            <ul>
-                <li><strong>ξ &gt; 0:</strong> Heavy-tailed distribution (Pareto-type, common for financial assets)</li>
-                <li><strong>ξ = 0:</strong> Exponential tail (medium risk)</li>
-                <li><strong>ξ &lt; 0:</strong> Short-tailed distribution (bounded, rare in finance)</li>
-            </ul>
-            
-            <p style="margin-top:1rem;">For most stock returns, ξ is positive, indicating fat tails with higher 
-            probability of extreme events than normal distribution predicts.</p>
-        </div>
-        """, unsafe_allow_html=True)
+F(x) = 1 − (1 + ξx/σ)^(−1/ξ)  for ξ ≠ 0
 
-        st.markdown('<div class="section-title">EVT-based VaR Formula</div>', unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="formula-box">
-            <strong>Value at Risk using GPD:</strong><br><br>
-            VaR<sub>α</sub> = u + (σ/ξ) × [(n/N<sub>u</sub> × (1−α))<sup>−ξ</sup> − 1]<br><br>
-            where:<br>
-            • u = threshold<br>
-            • n = total observations<br>
-            • N<sub>u</sub> = number of exceedances<br>
-            • α = confidence level (e.g., 0.95)
-        </div>
-        """, unsafe_allow_html=True)
+where:
+• ξ (xi) = shape parameter (determines tail heaviness)
+• σ (sigma) = scale parameter
+• x = exceedance (loss − threshold)
+        """, language=None)
+
+        st.markdown("#### Interpreting the Shape Parameter (ξ):")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.success("**ξ > 0**  \nHeavy-tailed distribution (Pareto-type, common for financial assets)")
+        with col2:
+            st.info("**ξ = 0**  \nExponential tail (medium risk)")
+        with col3:
+            st.warning("**ξ < 0**  \nShort-tailed distribution (bounded, rare in finance)")
+
+        st.write("For most stock returns, ξ is positive, indicating fat tails with higher probability of extreme events than normal distribution predicts.")
+
+        st.markdown("---")
+        st.markdown("#### EVT-based VaR Formula")
+        st.code("""
+Value at Risk using GPD:
+
+VaR_α = u + (σ/ξ) × [(n/N_u × (1−α))^(−ξ) − 1]
+
+where:
+• u = threshold
+• n = total observations
+• N_u = number of exceedances
+• α = confidence level (e.g., 0.95)
+        """, language=None)
 
     with edu_tab2:
-        st.markdown('<div class="section-title">⚡ Volatility Models</div>', unsafe_allow_html=True)
+        st.subheader("⚡ Volatility Models")
         
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown(f"""
-            <div class="info-box">
-                <h4 style="color:{COLORS['accent_gold']};">1. EWMA (Exponentially Weighted Moving Average)</h4>
-                <strong>Formula:</strong><br>
-                σ²<sub>t</sub> = λ × σ²<sub>t-1</sub> + (1−λ) × r²<sub>t-1</sub><br><br>
-                
-                <strong>Key Features:</strong>
-                <ul>
-                    <li>Simple recursive formula</li>
-                    <li>λ typically 0.94 (RiskMetrics standard)</li>
-                    <li>Recent returns weighted more heavily</li>
-                    <li>No parameter estimation needed</li>
-                </ul>
-                
-                <strong>Advantages:</strong>
-                <ul>
-                    <li>Easy to implement</li>
-                    <li>Responds quickly to market changes</li>
-                    <li>Industry standard baseline</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("### 1. EWMA")
+            st.markdown("*Exponentially Weighted Moving Average*")
+            
+            st.code("σ²_t = λ × σ²_(t-1) + (1−λ) × r²_(t-1)", language=None)
+            
+            st.markdown("**Key Features:**")
+            st.write("• Simple recursive formula")
+            st.write("• λ typically 0.94 (RiskMetrics standard)")
+            st.write("• Recent returns weighted more heavily")
+            st.write("• No parameter estimation needed")
+            
+            st.markdown("**Advantages:**")
+            st.write("• Easy to implement")
+            st.write("• Responds quickly to market changes")
+            st.write("• Industry standard baseline")
 
-            st.markdown(f"""
-            <div class="info-box" style="margin-top:1rem;">
-                <h4 style="color:{COLORS['accent_gold']};">3. GARCH(1,1)</h4>
-                <strong>Formula:</strong><br>
-                σ²<sub>t</sub> = ω + α₁ × r²<sub>t-1</sub> + β₁ × σ²<sub>t-1</sub><br><br>
-                
-                <strong>Key Features:</strong>
-                <ul>
-                    <li>Includes lagged variance (mean reversion)</li>
-                    <li>Most widely used volatility model</li>
-                    <li>Persistence: α₁ + β₁ (usually ~0.99)</li>
-                    <li>Long-run variance: ω/(1−α₁−β₁)</li>
-                </ul>
-                
-                <strong>Advantages:</strong>
-                <ul>
-                    <li>Captures volatility clustering</li>
-                    <li>Mean-reverting to long-run level</li>
-                    <li>Parsimonious (only 3 parameters)</li>
-                    <li>Good forecasting performance</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("---")
+            
+            st.markdown("### 3. GARCH(1,1)")
+            st.code("σ²_t = ω + α₁ × r²_(t-1) + β₁ × σ²_(t-1)", language=None)
+            
+            st.markdown("**Key Features:**")
+            st.write("• Includes lagged variance (mean reversion)")
+            st.write("• Most widely used volatility model")
+            st.write("• Persistence: α₁ + β₁ (usually ~0.99)")
+            st.write("• Long-run variance: ω/(1−α₁−β₁)")
+            
+            st.markdown("**Advantages:**")
+            st.write("• Captures volatility clustering")
+            st.write("• Mean-reverting to long-run level")
+            st.write("• Parsimonious (only 3 parameters)")
+            st.write("• Good forecasting performance")
 
         with col2:
-            st.markdown(f"""
-            <div class="info-box">
-                <h4 style="color:{COLORS['accent_gold']};">2. ARCH(1)</h4>
-                <strong>Formula:</strong><br>
-                σ²<sub>t</sub> = ω + α₁ × r²<sub>t-1</sub><br><br>
-                
-                <strong>Key Features:</strong>
-                <ul>
-                    <li>Autoregressive conditional heteroskedasticity</li>
-                    <li>Variance depends on past squared returns</li>
-                    <li>Captures volatility clustering</li>
-                    <li>Foundation for GARCH family</li>
-                </ul>
-                
-                <strong>Limitations:</strong>
-                <ul>
-                    <li>May need many lags for adequate fit</li>
-                    <li>No mean reversion</li>
-                    <li>GARCH usually preferred</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("### 2. ARCH(1)")
+            st.code("σ²_t = ω + α₁ × r²_(t-1)", language=None)
+            
+            st.markdown("**Key Features:**")
+            st.write("• Autoregressive conditional heteroskedasticity")
+            st.write("• Variance depends on past squared returns")
+            st.write("• Captures volatility clustering")
+            st.write("• Foundation for GARCH family")
+            
+            st.markdown("**Limitations:**")
+            st.write("• May need many lags for adequate fit")
+            st.write("• No mean reversion")
+            st.write("• GARCH usually preferred")
 
-            st.markdown(f"""
-            <div class="info-box" style="margin-top:1rem;">
-                <h4 style="color:{COLORS['accent_gold']};">4. EGARCH(1,1)</h4>
-                <strong>Formula:</strong><br>
-                log(σ²<sub>t</sub>) = ω + β₁ × log(σ²<sub>t-1</sub>) + α₁ × |z<sub>t-1</sub>| + γ × z<sub>t-1</sub><br><br>
-                
-                <strong>Key Features:</strong>
-                <ul>
-                    <li>Logarithmic form ensures σ²<sub>t</sub> &gt; 0</li>
-                    <li>γ captures leverage effect</li>
-                    <li>Negative shocks (γ &lt; 0) increase volatility more</li>
-                    <li>Asymmetric response to news</li>
-                </ul>
-                
-                <strong>Advantages:</strong>
-                <ul>
-                    <li>Captures leverage effect in equity returns</li>
-                    <li>No parameter constraints needed</li>
-                    <li>Better for stocks (asymmetric volatility)</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("---")
+            
+            st.markdown("### 4. EGARCH(1,1)")
+            st.code("log(σ²_t) = ω + β₁×log(σ²_(t-1)) + α₁×|z_(t-1)| + γ×z_(t-1)", language=None)
+            
+            st.markdown("**Key Features:**")
+            st.write("• Logarithmic form ensures σ²_t > 0")
+            st.write("• γ captures leverage effect")
+            st.write("• Negative shocks (γ < 0) increase volatility more")
+            st.write("• Asymmetric response to news")
+            
+            st.markdown("**Advantages:**")
+            st.write("• Captures leverage effect in equity returns")
+            st.write("• No parameter constraints needed")
+            st.write("• Better for stocks (asymmetric volatility)")
 
     with edu_tab3:
-        st.markdown('<div class="section-title">📈 VaR & Expected Shortfall</div>', unsafe_allow_html=True)
+        st.subheader("📈 VaR & Expected Shortfall")
         
-        st.markdown(f"""
-        <div class="info-box">
-            <h4 style="color:{COLORS['accent_gold']};">Value at Risk (VaR)</h4>
-            <p><strong>Definition:</strong> The maximum expected loss over a given time horizon at a specified 
-            confidence level.</p>
-            
-            <p style="margin-top:1rem;"><strong>Example:</strong> 1-day VaR of $1 million at 95% confidence means:
-            "We are 95% confident that our losses will not exceed $1 million tomorrow."</p>
-            
-            <h4 style="color:{COLORS['accent_gold']}; margin-top:1rem;">Calculation Methods:</h4>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("### Value at Risk (VaR)")
+        st.write("**Definition:** The maximum expected loss over a given time horizon at a specified confidence level.")
         
-        st.markdown(f"""
-        <div class="info-box">
-            <strong>1. Parametric (Variance-Covariance):</strong> Assumes normal distribution
-        </div>
-        """, unsafe_allow_html=True)
+        st.info("**Example:** 1-day VaR of $1 million at 95% confidence means: 'We are 95% confident that our losses will not exceed $1 million tomorrow.'")
         
-        st.markdown(f"""
-        <div class="formula-box">
-            VaR<sub>α</sub> = μ + σ × z<sub>α</sub><br>
-            where z<sub>α</sub> is the α-quantile of standard normal
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("#### Calculation Methods:")
         
-        st.markdown(f"""
-        <div class="info-box">
-            <strong>2. Historical Simulation:</strong> Uses empirical distribution
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div class="formula-box">
-            VaR<sub>α</sub> = α-th quantile of historical returns
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div class="info-box">
-            <strong>3. Monte Carlo:</strong> Simulates future scenarios
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div class="formula-box">
-            Generate N scenarios → Sort → Take α-th percentile
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("**1. Parametric (Variance-Covariance)**")
+        st.write("Assumes normal distribution")
+        st.code("""
+VaR_α = μ + σ × z_α
 
-        st.markdown(f"""
-        <div class="info-box" style="margin-top:1rem;">
-            <h4 style="color:{COLORS['accent_gold']};">Expected Shortfall (ES / CVaR)</h4>
-            <p><strong>Definition:</strong> The average loss given that the loss exceeds VaR.</p>
-            
-            <p style="margin-top:1rem;"><strong>Why ES?</strong></p>
-            <ul>
-                <li>VaR doesn't tell us about losses beyond the threshold</li>
-                <li>ES is a <strong>coherent risk measure</strong> (VaR is not)</li>
-                <li>ES satisfies subadditivity: ES(X+Y) ≤ ES(X) + ES(Y)</li>
-                <li>Preferred by Basel III for market risk capital</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+where z_α is the α-quantile of standard normal
+        """, language=None)
         
-        st.markdown(f"""
-        <div class="formula-box">
-            <strong>For Normal Distribution:</strong><br><br>
-            ES<sub>α</sub> = μ + σ × φ(z<sub>α</sub>) / (1−α)<br><br>
-            where φ is the standard normal PDF<br><br>
-            
-            <strong>For GPD (EVT):</strong><br><br>
-            ES<sub>α</sub> = (VaR<sub>α</sub> + σ − ξ×u) / (1−ξ)  for ξ &lt; 1
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("**2. Historical Simulation**")
+        st.write("Uses empirical distribution")
+        st.code("VaR_α = α-th quantile of historical returns", language=None)
+        
+        st.markdown("**3. Monte Carlo**")
+        st.write("Simulates future scenarios")
+        st.code("Generate N scenarios → Sort → Take α-th percentile", language=None)
 
-        st.markdown(f"""
-        <div class="info-box" style="margin-top:1rem;">
-            <h4 style="color:{COLORS['accent_gold']};">Comparison: VaR vs ES</h4>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("### Expected Shortfall (ES / CVaR)")
+        st.write("**Definition:** The average loss given that the loss exceeds VaR.")
+        
+        st.markdown("#### Why ES?")
+        st.write("• VaR doesn't tell us about losses beyond the threshold")
+        st.write("• ES is a **coherent risk measure** (VaR is not)")
+        st.write("• ES satisfies subadditivity: ES(X+Y) ≤ ES(X) + ES(Y)")
+        st.write("• Preferred by Basel III for market risk capital")
+
+        st.markdown("#### Formulas")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("**Normal Distribution:**")
+            st.code("""
+ES_α = μ + σ × φ(z_α) / (1−α)
+
+where φ is standard normal PDF
+            """, language=None)
+        
+        with col2:
+            st.markdown("**GPD (EVT):**")
+            st.code("""
+ES_α = (VaR_α + σ − ξ×u) / (1−ξ)
+
+for ξ < 1
+            """, language=None)
+
+        st.markdown("---")
+        st.markdown("### Comparison: VaR vs ES")
         
         comparison = pd.DataFrame({
             'Aspect': ['Definition', 'Information', 'Coherence', 'Optimization', 'Regulatory', 'Interpretation'],
@@ -855,46 +787,34 @@ with tab4:
         st.dataframe(comparison, use_container_width=True, hide_index=True)
 
     with edu_tab4:
-        st.markdown('<div class="section-title">🎯 Practical Applications</div>', unsafe_allow_html=True)
+        st.subheader("🎯 Practical Applications")
         
-        st.markdown(f"""
-        <div class="info-box">
-            <h4 style="color:{COLORS['accent_gold']};">1. Portfolio Management</h4>
-            <ul>
-                <li><strong>Position Sizing:</strong> Limit position size so portfolio VaR stays within risk budget</li>
-                <li><strong>Risk Budgeting:</strong> Allocate risk capital across strategies based on ES</li>
-                <li><strong>Performance Attribution:</strong> Compare returns to risk-adjusted metrics (Sharpe, Sortino)</li>
-                <li><strong>Stress Testing:</strong> Use EVT to model extreme scenarios</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("### 1. Portfolio Management")
+        st.write("**Position Sizing:** Limit position size so portfolio VaR stays within risk budget")
+        st.write("**Risk Budgeting:** Allocate risk capital across strategies based on ES")
+        st.write("**Performance Attribution:** Compare returns to risk-adjusted metrics (Sharpe, Sortino)")
+        st.write("**Stress Testing:** Use EVT to model extreme scenarios")
 
-        st.markdown(f"""
-        <div class="info-box" style="margin-top:1rem;">
-            <h4 style="color:{COLORS['accent_gold']};">2. Regulatory Compliance</h4>
-            <ul>
-                <li><strong>Basel III:</strong> Banks must calculate ES for market risk capital requirements</li>
-                <li><strong>Backtesting:</strong> Regulators require validation that VaR/ES models are accurate</li>
-                <li><strong>Documentation:</strong> Must document model assumptions, parameters, and validation</li>
-                <li><strong>Model Review:</strong> Annual or more frequent review of risk models</li>
-            </ul>
-            
-            <div class="formula-box" style="margin-top:1rem;">
-                <strong>Market Risk Capital (Basel III):</strong><br><br>
-                K = max(VaR_t-1, mc × VaR_avg) + SRC<br><br>
-                where:<br>
-                • mc = multiplier (≥3, typically 3-4 based on backtesting)<br>
-                • VaR_avg = average VaR over last 60 days<br>
-                • SRC = stressed capital add-on
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("### 2. Regulatory Compliance")
+        st.write("**Basel III:** Banks must calculate ES for market risk capital requirements")
+        st.write("**Backtesting:** Regulators require validation that VaR/ES models are accurate")
+        st.write("**Documentation:** Must document model assumptions, parameters, and validation")
+        st.write("**Model Review:** Annual or more frequent review of risk models")
+        
+        st.code("""
+Market Risk Capital (Basel III):
 
-        st.markdown(f"""
-        <div class="info-box" style="margin-top:1rem;">
-            <h4 style="color:{COLORS['accent_gold']};">3. Model Selection Guidelines</h4>
-        </div>
-        """, unsafe_allow_html=True)
+K = max(VaR_(t-1), mc × VaR_avg) + SRC
+
+where:
+• mc = multiplier (≥3, typically 3-4 based on backtesting)
+• VaR_avg = average VaR over last 60 days
+• SRC = stressed capital add-on
+        """, language=None)
+
+        st.markdown("---")
+        st.markdown("### 3. Model Selection Guidelines")
         
         model_guide = pd.DataFrame({
             'Scenario': [
@@ -924,37 +844,32 @@ with tab4:
         })
         st.dataframe(model_guide, use_container_width=True, hide_index=True)
 
-        st.markdown(f"""
-        <div class="info-box" style="margin-top:1rem;">
-            <h4 style="color:{COLORS['accent_gold']};">4. Backtesting Framework</h4>
-            <p>All risk models must be validated against actual losses:</p>
-            
-            <strong>Traffic Light Approach (Basel):</strong>
-            <ul>
-                <li><strong>Green Zone (0-4 exceptions):</strong> Model adequate, multiplier = 3.0</li>
-                <li><strong>Yellow Zone (5-9 exceptions):</strong> Review needed, multiplier = 3.4-3.85</li>
-                <li><strong>Red Zone (10+ exceptions):</strong> Model inadequate, multiplier = 4.0</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("### 4. Backtesting Framework")
+        st.write("All risk models must be validated against actual losses:")
         
-        st.markdown('<div class="section-title">Kupiec Test Formula</div>', unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="formula-box">
-            <strong>Kupiec Test (Unconditional Coverage):</strong><br><br>
-            
-            LR<sub>uc</sub> = -2 × ln[(1−α)<sup>T−N</sup> × α<sup>N</sup>] + 2 × ln[(1−N/T)<sup>T−N</sup> × (N/T)<sup>N</sup>]<br><br>
-            
-            where:<br>
-            • T = number of observations<br>
-            • N = number of VaR exceptions<br>
-            • α = VaR confidence level<br><br>
-            
-            LR<sub>uc</sub> ~ χ²(1) under null hypothesis
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("#### Traffic Light Approach (Basel)")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.success("**Green Zone (0-4 exceptions)**  \nModel adequate  \nMultiplier = 3.0")
+        with col2:
+            st.warning("**Yellow Zone (5-9 exceptions)**  \nReview needed  \nMultiplier = 3.4-3.85")
+        with col3:
+            st.error("**Red Zone (10+ exceptions)**  \nModel inadequate  \nMultiplier = 4.0")
 
+        st.markdown("#### Kupiec Test Formula")
+        st.code("""
+Kupiec Test (Unconditional Coverage):
 
+LR_uc = -2 × ln[(1−α)^(T−N) × α^N] + 2 × ln[(1−N/T)^(T−N) × (N/T)^N]
+
+where:
+• T = number of observations
+• N = number of VaR exceptions
+• α = VaR confidence level
+
+LR_uc ~ χ²(1) under null hypothesis
+        """, language=None)
 # ========== TAB 5: MODEL DETAILS ==========
 with tab5:
     st.markdown('<div class="section-title">🎓 Technical Model Specifications</div>', unsafe_allow_html=True)
