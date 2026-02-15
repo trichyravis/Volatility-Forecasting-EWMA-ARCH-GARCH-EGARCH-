@@ -1,92 +1,77 @@
+
 """
-Diagnostic test app to verify all imports work correctly.
-Run this first to identify any missing dependencies.
+Debug script to verify data caching and refresh behavior
 """
 
 import streamlit as st
+import pandas as pd
+from data_utils import NIFTY50_LIST, fetch_prices
+from evt_model import get_returns, run_evt_var_es
 
-st.title("Dependency Diagnostic Test")
+st.title("🔍 Cache Behavior Test")
 
-# Test each import individually
-imports_status = {}
-
-st.write("Testing imports...")
-
-# 1. Streamlit
-try:
-    import streamlit
-    imports_status['streamlit'] = f"✅ {streamlit.__version__}"
-except Exception as e:
-    imports_status['streamlit'] = f"❌ {str(e)}"
-
-# 2. Pandas
-try:
-    import pandas as pd
-    imports_status['pandas'] = f"✅ {pd.__version__}"
-except Exception as e:
-    imports_status['pandas'] = f"❌ {str(e)}"
-
-# 3. NumPy
-try:
-    import numpy as np
-    imports_status['numpy'] = f"✅ {np.__version__}"
-except Exception as e:
-    imports_status['numpy'] = f"❌ {str(e)}"
-
-# 4. Matplotlib
-try:
-    import matplotlib
-    import matplotlib.pyplot as plt
-    imports_status['matplotlib'] = f"✅ {matplotlib.__version__}"
-except Exception as e:
-    imports_status['matplotlib'] = f"❌ {str(e)}"
-
-# 5. SciPy
-try:
-    from scipy import stats
-    import scipy
-    imports_status['scipy'] = f"✅ {scipy.__version__}"
-except Exception as e:
-    imports_status['scipy'] = f"❌ {str(e)}"
-
-# 6. yfinance
-try:
-    import yfinance as yf
-    imports_status['yfinance'] = f"✅ Installed"
-except Exception as e:
-    imports_status['yfinance'] = f"❌ {str(e)}"
-
-# 7. arch
-try:
-    from arch import arch_model
-    import arch
-    imports_status['arch'] = f"✅ {arch.__version__}"
-except Exception as e:
-    imports_status['arch'] = f"❌ {str(e)}"
-
-# Display results
-st.subheader("Import Status:")
-for package, status in imports_status.items():
-    st.write(f"**{package}:** {status}")
-
-# Check if all imports succeeded
-all_ok = all("✅" in status for status in imports_status.values())
-
-if all_ok:
-    st.success("🎉 All dependencies are installed correctly!")
-    st.info("You can now run the main app.py")
+# Sidebar
+ticker_options = ["^NSEI (Nifty 50 Index)"] + [
+    f"{name} ({ticker})" for ticker, name in NIFTY50_LIST[:5]  # Only first 5 for testing
+]
+ticker_display = st.sidebar.selectbox("Select stock", ticker_options, index=0)
+if ticker_display.startswith("^"):
+    TICKER = "^NSEI"
 else:
-    st.error("⚠️ Some dependencies are missing or failed to import")
-    st.write("**Next steps:**")
-    st.write("1. Check your requirements.txt file")
-    st.write("2. Ensure all packages are listed")
-    st.write("3. Reboot the app in Streamlit Cloud")
+    TICKER = ticker_display.split("(")[-1].rstrip(")")
 
-# Show Python and system info
-st.subheader("System Information:")
-import sys
-import platform
+years = st.sidebar.slider("Years", 1.0, 3.0, 2.0, 0.5)
+evt_alpha = st.sidebar.slider("Confidence", 0.90, 0.99, 0.95, 0.01)
+evt_threshold = st.sidebar.slider("Threshold", 0.85, 0.95, 0.90, 0.01)
 
-st.write(f"**Python version:** {sys.version}")
-st.write(f"**Platform:** {platform.platform()}")
-st.write(f"**System:** {platform.system()}")
+# Show current parameters
+st.write("### Current Parameters")
+st.write(f"- **Ticker:** {TICKER}")
+st.write(f"- **Years:** {years}")
+st.write(f"- **Alpha:** {evt_alpha}")
+st.write(f"- **Threshold:** {evt_threshold}")
+
+# Load data WITHOUT underscore prefix (should cache based on parameters)
+@st.cache_data(ttl=3600, show_spinner="Loading data...")
+def load_data(ticker: str, years: float):
+    st.write(f"🔄 **CACHE MISS** - Fetching fresh data for {ticker}")
+    prices = fetch_prices(ticker, years)
+    returns = get_returns(prices)
+    return prices, returns.dropna()
+
+# Load and display
+try:
+    prices, returns = load_data(TICKER, years)
+    n_returns = len(returns)
+    
+    st.success(f"✅ Data loaded: {n_returns:,} returns")
+    
+    # Run EVT
+    with st.spinner("Calculating EVT..."):
+        result = run_evt_var_es(returns, alpha=evt_alpha, threshold_quantile=evt_threshold)
+    
+    # Display results
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("VaR", f"{result['var']*100:.2f}%")
+    col2.metric("ES", f"{result['es']*100:.2f}%")
+    col3.metric("GPD ξ", f"{result['xi']:.4f}")
+    col4.metric("Exceedances", result['n_exceedances'])
+    
+    st.write("### Debug Info")
+    st.write(f"- Returns shape: {returns.shape}")
+    st.write(f"- First date: {returns.index[0]}")
+    st.write(f"- Last date: {returns.index[-1]}")
+    
+except Exception as e:
+    st.error(f"Error: {e}")
+    import traceback
+    st.code(traceback.format_exc())
+
+st.write("---")
+st.info("""
+**Test Instructions:**
+1. Change the ticker → Should see 'CACHE MISS' and new VaR values
+2. Change years → Should see 'CACHE MISS' and new VaR values
+3. Change only alpha/threshold → Should NOT see 'CACHE MISS', but VaR should update
+4. Change back to same ticker/years → Should use cached data (no 'CACHE MISS')
+""")
