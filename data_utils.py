@@ -1,69 +1,109 @@
-"""Shared data: Nifty 50 list and price fetch for Streamlit app."""
 
-from datetime import datetime, timedelta
+"""
+Data utilities for fetching Nifty 50 stock prices.
+"""
+
 import pandas as pd
 import yfinance as yf
+from datetime import datetime, timedelta
 
-# Nifty 50 constituents (NSE; Yahoo Finance: .NS). Format: (ticker, company_name)
+# Nifty 50 stocks (as of recent composition)
 NIFTY50_LIST = [
-    ("ADANIPORTS.NS", "Adani Ports and SEZ"),
+    ("ADANIPORTS.NS", "Adani Ports"),
     ("ASIANPAINT.NS", "Asian Paints"),
     ("AXISBANK.NS", "Axis Bank"),
     ("BAJAJ-AUTO.NS", "Bajaj Auto"),
     ("BAJFINANCE.NS", "Bajaj Finance"),
     ("BAJAJFINSV.NS", "Bajaj Finserv"),
+    ("BPCL.NS", "BPCL"),
     ("BHARTIARTL.NS", "Bharti Airtel"),
-    ("BPCL.NS", "Bharat Petroleum"),
-    ("BRITANNIA.NS", "Britannia Industries"),
+    ("BRITANNIA.NS", "Britannia"),
     ("CIPLA.NS", "Cipla"),
     ("COALINDIA.NS", "Coal India"),
-    ("DIVISLAB.NS", "Divi's Laboratories"),
-    ("DRREDDY.NS", "Dr. Reddy's Laboratories"),
+    ("DIVISLAB.NS", "Divi's Labs"),
+    ("DRREDDY.NS", "Dr. Reddy's"),
     ("EICHERMOT.NS", "Eicher Motors"),
-    ("GRASIM.NS", "Grasim Industries"),
-    ("HCLTECH.NS", "HCL Technologies"),
+    ("GRASIM.NS", "Grasim"),
+    ("HCLTECH.NS", "HCL Tech"),
     ("HDFCBANK.NS", "HDFC Bank"),
-    ("HDFCLIFE.NS", "HDFC Life Insurance"),
+    ("HDFCLIFE.NS", "HDFC Life"),
     ("HEROMOTOCO.NS", "Hero MotoCorp"),
-    ("HINDALCO.NS", "Hindalco Industries"),
+    ("HINDALCO.NS", "Hindalco"),
     ("HINDUNILVR.NS", "Hindustan Unilever"),
     ("ICICIBANK.NS", "ICICI Bank"),
+    ("ITC.NS", "ITC"),
     ("INDUSINDBK.NS", "IndusInd Bank"),
     ("INFY.NS", "Infosys"),
-    ("ITC.NS", "ITC"),
     ("JSWSTEEL.NS", "JSW Steel"),
-    ("KOTAKBANK.NS", "Kotak Mahindra Bank"),
-    ("LT.NS", "Larsen & Toubro"),
-    ("M&M.NS", "Mahindra & Mahindra"),
+    ("KOTAKBANK.NS", "Kotak Bank"),
+    ("LT.NS", "L&T"),
+    ("M&M.NS", "M&M"),
     ("MARUTI.NS", "Maruti Suzuki"),
-    ("NESTLEIND.NS", "Nestle India"),
     ("NTPC.NS", "NTPC"),
-    ("ONGC.NS", "Oil and Natural Gas"),
-    ("POWERGRID.NS", "Power Grid Corporation"),
-    ("RELIANCE.NS", "Reliance Industries"),
-    ("SBILIFE.NS", "SBI Life Insurance"),
-    ("SBIN.NS", "State Bank of India"),
-    ("SUNPHARMA.NS", "Sun Pharmaceutical"),
+    ("NESTLEIND.NS", "Nestle India"),
+    ("ONGC.NS", "ONGC"),
+    ("POWERGRID.NS", "Power Grid"),
+    ("RELIANCE.NS", "Reliance"),
+    ("SBILIFE.NS", "SBI Life"),
+    ("SBIN.NS", "SBI"),
+    ("SUNPHARMA.NS", "Sun Pharma"),
+    ("TCS.NS", "TCS"),
+    ("TATACONSUM.NS", "Tata Consumer"),
     ("TATAMOTORS.NS", "Tata Motors"),
     ("TATASTEEL.NS", "Tata Steel"),
-    ("TCS.NS", "Tata Consultancy Services"),
     ("TECHM.NS", "Tech Mahindra"),
-    ("TITAN.NS", "Titan Company"),
+    ("TITAN.NS", "Titan"),
     ("ULTRACEMCO.NS", "UltraTech Cement"),
-    ("WIPRO.NS", "Wipro"),
-    ("APOLLOHOSP.NS", "Apollo Hospitals"),
-    ("LTIM.NS", "LTIMindtree"),
-    ("ADANIENT.NS", "Adani Enterprises"),
-    ("SBICARD.NS", "SBI Cards"),
     ("UPL.NS", "UPL"),
+    ("WIPRO.NS", "Wipro"),
 ]
 
 
-def fetch_prices(ticker: str, years: float) -> pd.Series:
-    """Download adjusted close prices from Yahoo Finance."""
-    end = datetime.now()
-    start = end - timedelta(days=years * 365)
-    hist = yf.Ticker(ticker).history(start=start, end=end, auto_adjust=True)
-    if hist is None or hist.empty:
-        raise ValueError(f"No data for ticker {ticker!r}.")
-    return hist["Close"]
+def fetch_prices(ticker: str, years: float = 3.0) -> pd.Series:
+    """
+    Fetch historical adjusted close prices for a given ticker.
+    
+    Parameters:
+    -----------
+    ticker : str
+        Yahoo Finance ticker symbol (e.g., '^NSEI', 'RELIANCE.NS')
+    years : float
+        Number of years of historical data to fetch
+    
+    Returns:
+    --------
+    pd.Series
+        Time series of adjusted close prices with DatetimeIndex
+    """
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=int(years * 365))
+    
+    try:
+        data = yf.download(
+            ticker,
+            start=start_date,
+            end=end_date,
+            progress=False,
+            auto_adjust=True
+        )
+        
+        if data.empty:
+            raise ValueError(f"No data returned for ticker {ticker}")
+        
+        # Handle both single and multi-column DataFrames
+        if 'Close' in data.columns:
+            prices = data['Close']
+        elif len(data.columns) == 1:
+            prices = data.iloc[:, 0]
+        else:
+            prices = data['Adj Close'] if 'Adj Close' in data.columns else data['Close']
+        
+        # Ensure it's a Series with proper name
+        if isinstance(prices, pd.DataFrame):
+            prices = prices.iloc[:, 0]
+        
+        prices.name = ticker
+        return prices.dropna()
+    
+    except Exception as e:
+        raise Exception(f"Error fetching data for {ticker}: {str(e)}")
