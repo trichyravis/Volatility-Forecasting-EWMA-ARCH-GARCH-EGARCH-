@@ -39,7 +39,7 @@ BRANDING = {
 }
 
 PAGE_CONFIG = {
-    'page_title': 'Nifty 50 VaR & Volatility | Mountain Path',
+    'page_title': 'Nifty 50 Risk Analytics - EVT & Volatility Models | Mountain Path',
     'page_icon': '🏔️',
     'layout': 'wide',
     'initial_sidebar_state': 'expanded',
@@ -232,7 +232,11 @@ apply_styles()
 # Header
 st.markdown(f"""
 <div class="header-container">
-    <h1>{BRANDING['icon']} Nifty 50 VaR, ES & Volatility Analysis</h1>
+    <h1>{BRANDING['icon']} Nifty 50 Risk Analytics Platform</h1>
+    <p style="font-size:1rem; color:{COLORS['accent_gold']}; font-weight:600; margin:0.5rem 0;">
+        Extreme Value Theory (EVT) & Advanced Volatility Models</p>
+    <p style="font-size:0.85rem; color:{COLORS['text_primary']}; margin:0.3rem 0;">
+        VaR & Expected Shortfall | EWMA | ARCH | GARCH | EGARCH</p>
     <p>{BRANDING['name']}</p>
     <p style="font-size:0.8rem; color:{COLORS['text_secondary']};">
         {BRANDING['instructor']} | {BRANDING['credentials']}</p>
