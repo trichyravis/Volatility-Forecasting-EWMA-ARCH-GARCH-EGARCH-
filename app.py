@@ -52,26 +52,34 @@ def apply_styles():
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
 
         .stApp {{
-            background: linear-gradient(135deg, {COLORS['bg_dark']} 0%, {COLORS['dark_blue']} 50%, #0d2137 100%);
+            background: linear-gradient(135deg, #1a2332 0%, #243447 50%, #2a3f5f 100%);
         }}
         
-        /* Main content area - ensure readable text */
-        .main .block-container {{
-            color: {COLORS['text_primary']};
-        }}
-        
-        /* All text elements in main content */
-        .main p, .main li, .main span, .main div {{
+        /* CRITICAL: Force ALL text in main area to be light */
+        .main {{
             color: {COLORS['text_primary']} !important;
         }}
         
-        /* Headings */
+        .main * {{
+            color: {COLORS['text_primary']} !important;
+        }}
+        
+        .main p, .main span, .main div, .main li, .main label {{
+            color: {COLORS['text_primary']} !important;
+        }}
+        
+        /* Headings gold */
         .main h1, .main h2, .main h3, .main h4, .main h5, .main h6 {{
             color: {COLORS['accent_gold']} !important;
         }}
         
-        /* Markdown text */
-        .main .stMarkdown {{
+        /* Markdown elements */
+        .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown div {{
+            color: {COLORS['text_primary']} !important;
+        }}
+        
+        /* Text elements */
+        [data-testid="stText"], [data-testid="stMarkdownContainer"] {{
             color: {COLORS['text_primary']} !important;
         }}
 
@@ -80,7 +88,6 @@ def apply_styles():
             border-right: 1px solid rgba(255,215,0,0.2);
         }}
 
-        /* Force all sidebar text to be light colored */
         section[data-testid="stSidebar"] label,
         section[data-testid="stSidebar"] .stSlider label,
         section[data-testid="stSidebar"] .stNumberInput label,
@@ -93,7 +100,6 @@ def apply_styles():
             color: {COLORS['text_primary']} !important;
         }}
 
-        /* Number input and select box text inside fields */
         section[data-testid="stSidebar"] input {{
             color: #1a1a2e !important;
             background-color: #ffffff !important;
@@ -187,17 +193,28 @@ def apply_styles():
             border-radius: 8px;
         }}
         
-        /* Info, success, warning, error boxes */
+        /* Alert boxes - keep dark text for readability on colored backgrounds */
         .stAlert {{
+            background-color: rgba(255, 255, 255, 0.95) !important;
+        }}
+        
+        .stAlert p, .stAlert span, .stAlert div {{
             color: #1a1a2e !important;
         }}
         
         /* Code blocks */
         .stCodeBlock {{
-            background: rgba(0,51,102,0.3) !important;
+            background: rgba(20, 30, 48, 0.8) !important;
+            border: 1px solid rgba(255,215,0,0.2);
         }}
         
         .stCodeBlock code {{
+            color: {COLORS['text_primary']} !important;
+            background: transparent !important;
+        }}
+        
+        pre {{
+            background: rgba(20, 30, 48, 0.8) !important;
             color: {COLORS['text_primary']} !important;
         }}
 
