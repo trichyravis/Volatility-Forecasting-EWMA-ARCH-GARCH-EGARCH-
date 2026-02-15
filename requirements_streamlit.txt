@@ -1,8 +1,8 @@
 
-streamlit
-pandas
-numpy
-matplotlib
-scipy
-yfinance
-arch
+streamlit>=1.30.0
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+scipy>=1.10.0
+yfinance>=0.2.37
+arch>=6.3.0
