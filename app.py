@@ -54,12 +54,33 @@ def apply_styles():
         .stApp {{
             background: linear-gradient(135deg, {COLORS['bg_dark']} 0%, {COLORS['dark_blue']} 50%, #0d2137 100%);
         }}
+        
+        /* Main content area - ensure readable text */
+        .main .block-container {{
+            color: {COLORS['text_primary']};
+        }}
+        
+        /* All text elements in main content */
+        .main p, .main li, .main span, .main div {{
+            color: {COLORS['text_primary']} !important;
+        }}
+        
+        /* Headings */
+        .main h1, .main h2, .main h3, .main h4, .main h5, .main h6 {{
+            color: {COLORS['accent_gold']} !important;
+        }}
+        
+        /* Markdown text */
+        .main .stMarkdown {{
+            color: {COLORS['text_primary']} !important;
+        }}
 
         section[data-testid="stSidebar"] {{
             background: linear-gradient(180deg, {COLORS['bg_dark']} 0%, {COLORS['dark_blue']} 100%);
             border-right: 1px solid rgba(255,215,0,0.2);
         }}
 
+        /* Force all sidebar text to be light colored */
         section[data-testid="stSidebar"] label,
         section[data-testid="stSidebar"] .stSlider label,
         section[data-testid="stSidebar"] .stNumberInput label,
@@ -72,6 +93,7 @@ def apply_styles():
             color: {COLORS['text_primary']} !important;
         }}
 
+        /* Number input and select box text inside fields */
         section[data-testid="stSidebar"] input {{
             color: #1a1a2e !important;
             background-color: #ffffff !important;
@@ -163,6 +185,20 @@ def apply_styles():
         div[data-testid="stDataFrame"] {{
             border: 1px solid rgba(255,215,0,0.2);
             border-radius: 8px;
+        }}
+        
+        /* Info, success, warning, error boxes */
+        .stAlert {{
+            color: #1a1a2e !important;
+        }}
+        
+        /* Code blocks */
+        .stCodeBlock {{
+            background: rgba(0,51,102,0.3) !important;
+        }}
+        
+        .stCodeBlock code {{
+            color: {COLORS['text_primary']} !important;
         }}
 
         footer {{visibility: hidden;}}
