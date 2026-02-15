@@ -223,19 +223,22 @@ var_es_alpha = st.sidebar.slider("VaR/ES confidence (vol models)", 0.90, 0.99, 0
 
 
 @st.cache_data(ttl=3600)
-def load_data(_ticker: str, _years: float):
-    prices = fetch_prices(_ticker, _years)
+def load_data(ticker: str, years: float):
+    """Load and cache price data - updates when ticker or years change"""
+    prices = fetch_prices(ticker, years)
     returns = get_returns(prices)
     return prices, returns.dropna()
 
 
-# Load data once
-try:
-    prices, returns = load_data(TICKER, years)
-    n_returns = len(returns)
-except Exception as e:
-    st.error(f"Could not load data for {TICKER}: {e}")
-    st.stop()
+# Load data - will refresh when TICKER or years change
+with st.spinner(f'Loading data for {TICKER}...'):
+    try:
+        prices, returns = load_data(TICKER, years)
+        n_returns = len(returns)
+        st.success(f"✅ Loaded {n_returns:,} returns for {TICKER}", icon="✅")
+    except Exception as e:
+        st.error(f"Could not load data for {TICKER}: {e}")
+        st.stop()
 
 # ========== TABS ==========
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
@@ -390,15 +393,17 @@ with tab1:
 
 # ========== TAB 2: EVT VaR & ES ==========
 with tab2:
-    st.markdown(f'<div class="section-title">📈 Extreme Value Theory Analysis</div>', unsafe_allow_html=True)
-    st.caption(f"Using {n_returns} daily returns ({years} years)")
+    st.markdown(f'<div class="section-title">📈 Extreme Value Theory Analysis for {TICKER}</div>', unsafe_allow_html=True)
+    st.caption(f"Using {n_returns:,} daily returns ({years:.1f} years) | Confidence: {evt_alpha*100:.0f}% | Threshold: {evt_threshold_q*100:.0f}%")
     
     try:
-        result = run_evt_var_es(
-            returns,
-            alpha=evt_alpha,
-            threshold_quantile=evt_threshold_q,
-        )
+        # Run EVT analysis with current parameters
+        with st.spinner('Calculating EVT VaR & ES...'):
+            result = run_evt_var_es(
+                returns,
+                alpha=evt_alpha,
+                threshold_quantile=evt_threshold_q,
+            )
         pct = evt_alpha * 100
         col1, col2, col3, col4 = st.columns(4)
         with col1:
